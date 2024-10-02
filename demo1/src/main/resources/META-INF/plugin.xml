@@ -1,0 +1,15 @@
+<idea-plugin>
+    <id>com.example.demo1</id>
+    <name>Demo</name>
+    <vendor email="2732399562@qq.com">Your Name</vendor>
+
+    <!-- 项目组件注册 -->
+    <project-components>
+        <component>
+            <implementation-class>com.example.demo1.MyPluginComponent</implementation-class>
+        </component>
+    </project-components>
+
+    <!-- 插件依赖 -->
+    <depends>com.intellij.modules.platform</depends>
+</idea-plugin>
