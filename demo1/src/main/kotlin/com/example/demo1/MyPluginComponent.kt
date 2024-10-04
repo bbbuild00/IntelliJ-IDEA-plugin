@@ -15,7 +15,7 @@ class MyPluginComponent(private val project: Project) : ProjectComponent {
     private val logger = Logger.getInstance(MyPluginComponent::class.java)
 
     // 版本控制对象，用于保存代码快照
-    private val versionControl = VersionControlImpl()
+    private val versionControl = VersionControlImpl(project)
 
     /**
      * 当项目打开时调用此方法，初始化 CodeChangeListener 并开始监听代码变化。

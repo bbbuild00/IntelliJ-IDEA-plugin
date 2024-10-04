@@ -14,4 +14,7 @@ interface VersionControl {
      * @param snapshot Snapshot 对象，包含文件的快照信息
      */
     fun saveVersionSnapshot(file: VirtualFile, snapshot: Snapshot)
+
+    // 查询某个文件的历史快照
+    fun getSnapshotsForFile(file: VirtualFile): List<Snapshot>
 }

@@ -10,6 +10,13 @@
         </component>
     </project-components>
 
+    <actions>
+        <action id="com.example.demo1.ShowSnapshotManager" class="com.example.demo1.ShowSnapshotManagerAction" text="Show Snapshots">
+            <add-to-group group-id="EditorPopupMenu" anchor="last" />
+        </action>
+    </actions>
+
+
     <!-- 插件依赖 -->
     <depends>com.intellij.modules.platform</depends>
 </idea-plugin>
