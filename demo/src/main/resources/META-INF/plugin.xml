@@ -1,0 +1,21 @@
+<!-- 定义了一个名为 "Snapshot Manager" 的 IntelliJ IDEA 插件 -->
+<!-- 在 IDE 启动后会执行 tongji.lwm.VersionControlPlugin 类中的某些逻辑 -->
+<idea-plugin>
+    <id>tongji.lwm.demo</id>
+    <name>Snapshot Manager</name>
+    <vendor email="1119892751@qq.com" url="https://1.tongji.edu.cn">同济大学</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- 注册 postStartupActivity -->
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="tongji.lwm.VersionControlPlugin" />
+    </extensions>
+
+    <actions>
+        <action id="tongji.lwm.ShowSnapshotManagerAction" class="tongji.lwm.ShowSnapshotManagerAction"
+                text="ShowSnapshotManagerAction" description="ShowSnapshotManagerAction plugin">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
