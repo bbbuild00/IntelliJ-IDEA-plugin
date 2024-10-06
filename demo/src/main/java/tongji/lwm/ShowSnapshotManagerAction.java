@@ -21,7 +21,7 @@ public class ShowSnapshotManagerAction extends AnAction {
 
             VersionControlImpl versionControl = VersionControlPlugin.getVersionControl();
                 // 调用 SnapshotManagerUI 来显示快照管理界面
-            new SnapshotManagerUI(versionControl);
+            new SnapshotManagerUI(versionControl,project);
             System.out.println("lps3");
 
     });
