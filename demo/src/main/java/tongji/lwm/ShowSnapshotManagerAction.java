@@ -18,15 +18,11 @@ public class ShowSnapshotManagerAction extends AnAction {
         ApplicationManager.getApplication().invokeLater(() -> {
 
             // 获取 VersionControlPlugin 实例
-            System.out.println("lps5");
-            System.out.println("lps6");
 
-                System.out.println("lps1");
-                VersionControlImpl versionControl = VersionControlPlugin.getVersionControl();
+            VersionControlImpl versionControl = VersionControlPlugin.getVersionControl();
                 // 调用 SnapshotManagerUI 来显示快照管理界面
-                System.out.println("lps2");
-                new SnapshotManagerUI(versionControl);
-                System.out.println("lps3");
+            new SnapshotManagerUI(versionControl);
+            System.out.println("lps3");
 
     });
     }

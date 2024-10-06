@@ -11,13 +11,17 @@ import java.time.format.DateTimeFormatter;
  */
 public class Snapshot implements Serializable {
     private String name;
-    private final String filePath;    // 文件路径
+    private String filePath;    // 文件路径
     private final byte[] content;      // 文件内容
     private final long timestamp;      // 快照创建时间戳
     //private static int count=0;
     //private int ID;                    // ID
 
-    public Snapshot(String name,String filePath, byte[] content, long timestamp) {
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public Snapshot(String name, String filePath, byte[] content, long timestamp) {
         this.name = name;
         this.filePath = filePath;
         this.content = content;

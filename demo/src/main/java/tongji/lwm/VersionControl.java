@@ -18,4 +18,6 @@ public interface VersionControl {
 
     // 查询某个文件的历史快照
     List<Snapshot> getSnapshotsForFile(String path);
+    void deleteSnapshotsForFile(String path);
+    void changeSnapshotsPathForFile(String oldPath,String newPath);
 }

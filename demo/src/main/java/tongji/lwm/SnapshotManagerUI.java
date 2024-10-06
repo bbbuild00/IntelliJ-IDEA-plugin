@@ -20,7 +20,7 @@ public class SnapshotManagerUI {
         frame.setVisible(true);
 
         // 获取历史快照并显示在列表中
-        Snapshot[] snapshots = versionControl.getSnapshotsForFile("E:/plugin-develop/test01/People/Student.java").toArray(new Snapshot[0]);
+        Snapshot[] snapshots = versionControl.getSnapshotsForFile("E:/plugin-develop/test01/main.java").toArray(new Snapshot[0]);
         String[] snapshotStrings = new String[snapshots.length];
         for (int i = 0; i < snapshots.length; i++) {
             String formattedTimestamp = snapshots[i].getTimestamp();
