@@ -60,11 +60,13 @@ public class VersionControlImpl implements VersionControl {
                     System.out.println(entry.getFileName()); // 输出文件名
                     // 反序列化 Snapshot 对象
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(entry.toFile()))) {
-                        System.out.println("fanxuliehua bad");
                         Snapshot snapshot = (Snapshot) ois.readObject(); // 反序列化
-                        System.out.println("fanxuliehua win");
-                        snapshots.add(snapshot); // 将反序列化的对象添加到列表中
-                        System.out.println("add win");
+                        if (snapshot != null && snapshot.getFilePath().equals(path)) {
+                            System.out.println(snapshot.getFilePath());
+                            System.out.println("fanxuliehua win");
+                            snapshots.add(snapshot); // 将反序列化的对象添加到列表中
+                            System.out.println("add win");
+                        }
                     } catch (ClassNotFoundException e) {
                         System.out.println("catch1");
                         System.err.println("Class not found: " + e.getMessage());
@@ -79,44 +81,9 @@ public class VersionControlImpl implements VersionControl {
         }
 
 
-        /*
-
-        Path directoryPath = Paths.get(projectBasePath); // 获取快照目录
-
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directoryPath)) {
-            for (Path filePath : stream) {
-                // 确保是文件并且有合适的扩展名（如果有的话）
-                if (Files.isRegularFile(filePath)) {
-                    System.out.println(filePath);
-                    // 从文件中读取 Snapshot 对象
-                    Snapshot snapshot = readSnapshotFromFile(filePath);
-                    if (snapshot != null && snapshot.getFilePath()==path) {
-                        System.out.println("add win!!!");
-                        snapshots.add(snapshot);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.severe("读取快照文件失败: " + e.getMessage());
-        }
-
-         */
-
-
         return snapshots;
     }
-    private Snapshot readSnapshotFromFile(Path filePath) {
-        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filePath.toFile()))) {
-            Snapshot s=(Snapshot) inputStream.readObject();
-            System.out.println("fanxuliehua win!!!");
-            return s; // 反序列化并返回 Snapshot 对象
-        } catch (IOException | ClassNotFoundException e) {
-            logger.severe("从文件读取快照失败: " + filePath + ", 错误: " + e.getMessage());
-            System.out.println("fanxuliehua die!!!");
-            return null;
-        }
-    }
+
 
     // 关闭线程池（在适当的地方调用，比如在项目关闭时）
     public void shutdown() {
