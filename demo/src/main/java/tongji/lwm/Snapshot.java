@@ -22,7 +22,7 @@ public class Snapshot implements Serializable {
     }
 
     public Snapshot(String name, String filePath, byte[] content, long timestamp) {
-        this.name = name;
+        setName(name);
         this.filePath = filePath;
         this.content = content;
         this.timestamp = timestamp;

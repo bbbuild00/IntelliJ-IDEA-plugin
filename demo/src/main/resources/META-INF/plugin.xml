@@ -14,8 +14,9 @@
 
     <actions>
         <action id="tongji.lwm.ShowSnapshotManagerAction" class="tongji.lwm.ShowSnapshotManagerAction"
-                text="ShowSnapshotManagerAction" description="ShowSnapshotManagerAction plugin">
+                text="Version Control Manager" description="A plugin managing code versions">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift alt V"/>
         </action>
     </actions>
 </idea-plugin>
