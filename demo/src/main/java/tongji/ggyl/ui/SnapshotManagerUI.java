@@ -11,9 +11,9 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
+
 import com.github.difflib.patch.DeltaType;
 import tongji.ggyl.versioncontrol.VersionControl;
 import tongji.ggyl.eventlistening.Snapshot;
@@ -98,6 +98,7 @@ public class SnapshotManagerUI {
     }
     // 初始化快照列表
     private void initFileListView(VersionControl versionControl){
+        JPanel listPanel = new JPanel(new BorderLayout());
         snapshots = versionControl.getAllSnapshots().toArray(new Snapshot[0]);
         // 按照时间戳进行排序
         Arrays.sort(snapshots, (a, b) -> {
@@ -114,13 +115,7 @@ public class SnapshotManagerUI {
                 return 0; // 出现异常时不改变顺序
             }
         });
-        String[] snapshotStrings = new String[snapshots.length];
-        for (int i = 0; i < snapshots.length; i++) {
-            String formattedTimestamp = snapshots[i].getTimestamp();
-            String fileName = snapshots[i].getName().split("-")[0];
-            snapshotStrings[i] = formattedTimestamp + ", " + fileName;
-        }
-        snapshotList = new JBList<>(snapshotStrings);
+        snapshotList = new JBList<>(getSnapshotString(snapshots));
         // 设置自定义渲染器
         snapshotList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
@@ -138,8 +133,54 @@ public class SnapshotManagerUI {
                 return label;
             }
         });
+        initCombo(listPanel);
         // 快照列表放在左侧，内容显示在右侧的双栏
-        frame.add(new JScrollPane(snapshotList), BorderLayout.WEST);
+        listPanel.add(new JScrollPane(snapshotList), BorderLayout.CENTER);
+        frame.add(listPanel, BorderLayout.WEST);
+
+    }
+    // 初始化文件下拉选择框
+    private void initCombo(JPanel listPanel){
+        // 添加下拉框显示文件名
+        JComboBox<String> fileDropdown = new JComboBox<>();
+        fileDropdown.addItem("All");
+        fileDropdown.setPreferredSize(new Dimension(fileDropdown.getPreferredSize().width, 40));
+        Set<String> uniqueFileNames = new HashSet<>();
+        for (Snapshot snapshot : snapshots) {
+            // 从snapshot文件名中去掉时间戳部分
+            String fileName = snapshot.getFileNameWithoutTimestamp();
+            uniqueFileNames.add(fileName);
+        }
+        // 添加所有不重复的文件名到下拉框
+        for (String fileName : uniqueFileNames) {
+            fileDropdown.addItem(fileName);
+        }
+
+        // 添加ActionListener响应选择的文件名
+        fileDropdown.addActionListener(e -> {
+            String selectedFileName = (String) fileDropdown.getSelectedItem();
+            if(Objects.equals(selectedFileName, "All")){
+                snapshotList.setListData(getSnapshotString(snapshots));
+            }else{
+                List<Snapshot> filteredSnapshots = new ArrayList<>();
+
+                // 过滤出所有与选中文件名匹配的快照
+                for (Snapshot snapshot : snapshots) {
+                    if (snapshot.getFileNameWithoutTimestamp().equals(selectedFileName)) {
+                        filteredSnapshots.add(snapshot);
+                    }
+                }
+                // 更新JList中的数据
+                snapshotList.setListData(getSnapshotString(filteredSnapshots.toArray(new Snapshot[0])));
+            }
+        });
+
+        // 默认显示所有文件名的快照
+        snapshotList.setListData(getSnapshotString(snapshots));
+
+        // 设置默认选项为 "All"
+        fileDropdown.setSelectedItem("All");
+        listPanel.add(fileDropdown, BorderLayout.NORTH);
     }
     // 刷新比较显示内容
     private void refreshComparison(Snapshot selectedSnapshot, int selectedIndex, Snapshot[] snapshots) {
@@ -243,5 +284,14 @@ public class SnapshotManagerUI {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
+    }
+    private String[] getSnapshotString(Snapshot[] s){
+        String[] snapshotStrings = new String[s.length];
+        for (int i = 0; i < s.length; i++) {
+            String formattedTimestamp = s[i].getTimestamp();
+            String fileName = s[i].getFileNameWithoutTimestamp();
+            snapshotStrings[i] = formattedTimestamp + ", " + fileName;
+        }
+        return snapshotStrings;
     }
 }

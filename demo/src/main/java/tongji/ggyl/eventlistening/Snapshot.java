@@ -1,5 +1,6 @@
 package tongji.ggyl.eventlistening;
 
+import javax.naming.Name;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -60,4 +61,5 @@ public class Snapshot implements Serializable {
     public long getRealTimestamp(){
         return timestamp;
     }
+    public String getFileNameWithoutTimestamp(){ return name.split("-")[0]; }
 }
