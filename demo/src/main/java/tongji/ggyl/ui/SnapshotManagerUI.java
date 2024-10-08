@@ -64,7 +64,7 @@ public class SnapshotManagerUI {
             int selectedIndex = snapshotList.getSelectedIndex();
             if (selectedIndex != -1) {
                 Snapshot selectedSnapshot = snapshots[selectedIndex];
-                refreshComparison(selectedSnapshot, selectedIndex, snapshots);
+                refreshComparison(selectedSnapshot);
             }
         });
 
@@ -99,6 +99,7 @@ public class SnapshotManagerUI {
     // 初始化快照列表
     private void initFileListView(VersionControl versionControl){
         JPanel listPanel = new JPanel(new BorderLayout());
+        listPanel.setPreferredSize(new Dimension(250, listPanel.getPreferredSize().height));
         snapshots = versionControl.getAllSnapshots().toArray(new Snapshot[0]);
         // 按照时间戳进行排序
         Arrays.sort(snapshots, (a, b) -> {
@@ -183,13 +184,25 @@ public class SnapshotManagerUI {
         listPanel.add(fileDropdown, BorderLayout.NORTH);
     }
     // 刷新比较显示内容
-    private void refreshComparison(Snapshot selectedSnapshot, int selectedIndex, Snapshot[] snapshots) {
-        if (selectedIndex > 0) {
-            // 与上一快照比较
-            Snapshot previousSnapshot = snapshots[selectedIndex - 1];
+    private void refreshComparison(Snapshot selectedSnapshot) {
+        String currentFileName = selectedSnapshot.getFileNameWithoutTimestamp();
+        long currentTimestamp = selectedSnapshot.getRealTimestamp();
+
+        // 查找文件名相同且时间戳更小的快照作为上一版本
+        Snapshot previousSnapshot = null;
+        for (Snapshot snapshot : snapshots) {
+            if (snapshot.getFileNameWithoutTimestamp().equals(currentFileName)
+                    && snapshot.getRealTimestamp() < currentTimestamp) {
+                if (previousSnapshot == null || snapshot.getRealTimestamp() > previousSnapshot.getRealTimestamp()) {
+                    previousSnapshot = snapshot;
+                }
+            }
+        }
+
+        if (previousSnapshot != null) {
+            // 调用显示差异内容的函数
             displayDiff(previousSnapshot, selectedSnapshot);
         } else {
-            // 当点击最早的一版快照时，左侧文本框显示“无上一版快照”，右侧显示选择的快照内容
             leftPane.setText("This is already the earliest version. HAHA!");
             displaySnapshotContent(selectedSnapshot);
         }
