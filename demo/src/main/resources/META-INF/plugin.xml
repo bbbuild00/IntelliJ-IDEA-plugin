@@ -1,7 +1,7 @@
 <!-- 定义了一个名为 "Snapshot Manager" 的 IntelliJ IDEA 插件 -->
-<!-- 在 IDE 启动后会执行 tongji.lwm.VersionControlPlugin 类中的某些逻辑 -->
+<!-- 在 IDE 启动后会执行 tongji.ggyl.eventlistening.VersionControlPlugin 类中的某些逻辑 -->
 <idea-plugin>
-    <id>tongji.lwm.demo</id>
+    <id>tongji.ggyl.demo</id>
     <name>Snapshot Manager</name>
     <vendor email="1119892751@qq.com" url="https://1.tongji.edu.cn">同济大学</vendor>
 
@@ -9,11 +9,11 @@
 
     <!-- 注册 postStartupActivity -->
     <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="tongji.lwm.VersionControlPlugin" />
+        <postStartupActivity implementation="tongji.ggyl.eventlistening.VersionControlPlugin" />
     </extensions>
 
     <actions>
-        <action id="tongji.lwm.ShowSnapshotManagerAction" class="tongji.lwm.ShowSnapshotManagerAction"
+        <action id="tongji.ggyl.eventlistening.ShowSnapshotManagerAction" class="tongji.ggyl.eventlistening.ShowSnapshotManagerAction"
                 text="Version Control Manager" description="A plugin managing code versions">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt V"/>

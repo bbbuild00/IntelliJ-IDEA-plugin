@@ -1,4 +1,4 @@
-package tongji.lwm;
+package tongji.ggyl.eventlistening;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -57,6 +57,7 @@ public class Snapshot implements Serializable {
         // 格式化并返回字符串
         return dateTime.format(formatter);
     }
-
-
+    public long getRealTimestamp(){
+        return timestamp;
+    }
 }

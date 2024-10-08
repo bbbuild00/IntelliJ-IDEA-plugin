@@ -1,11 +1,10 @@
-package tongji.lwm;
+package tongji.ggyl.eventlistening;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import tongji.ggyl.ui.SnapshotManagerUI;
+import tongji.ggyl.versioncontrol.VersionControlImpl;
 
 public class ShowSnapshotManagerAction extends AnAction {
 

@@ -1,4 +1,4 @@
-package tongji.lwm;
+package tongji.ggyl.ui;
 
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import com.github.difflib.patch.DeltaType;
+import tongji.ggyl.versioncontrol.VersionControl;
+import tongji.ggyl.eventlistening.Snapshot;
 
 public class SnapshotManagerUI {
     private final JFrame frame = new JFrame("Version Control Manager");

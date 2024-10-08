@@ -1,15 +1,14 @@
-package tongji.lwm;
+package tongji.ggyl.eventlistening;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.ProjectActivity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.project.ProjectUtil;
 import org.jetbrains.annotations.NotNull;
 import kotlin.coroutines.Continuation;
 import kotlin.Unit;
+import tongji.ggyl.versioncontrol.VersionControlImpl;
 
 import java.io.File;
 import java.util.logging.Logger;
