@@ -17,22 +17,25 @@ import java.util.List;
 import com.github.difflib.patch.DeltaType;
 import tongji.ggyl.versioncontrol.VersionControl;
 import tongji.ggyl.eventlistening.Snapshot;
+import tongji.ggyl.versioncontrol.VersionControlImpl;
 
 public class SnapshotManagerUI {
+    private final VersionControlImpl versionControl;
     private final JFrame frame = new JFrame("Version Control Manager");
     private JList<String> snapshotList; // 显示快照信息的列表控件
     private Snapshot[] snapshots; // 存放快照信息
     private final JTextPane leftPane = new JTextPane(); // 左侧用于显示对比文件
     private final JTextPane rightPane = new JTextPane(); // 右侧用于显示选择的快照文件
 
-    public SnapshotManagerUI(VersionControl versionControl) {
+    public SnapshotManagerUI(VersionControlImpl versionControl) {
+        this.versionControl = versionControl;
         frame.setSize(1000, 600); // 调整窗口大小
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setVisible(true);
 
-        initFileListView(versionControl);
-
+        // 创建快照列表
+        initFileListView();
         // 创建双栏布局的 JPanel，包含标题和代码显示区
         JPanel contentPanel = new JPanel(new GridLayout(1, 2)); // 一行两列
         JPanel leftPanel = new JPanel(new BorderLayout());
@@ -62,42 +65,28 @@ public class SnapshotManagerUI {
 
         snapshotList.addListSelectionListener(e -> {
             int selectedIndex = snapshotList.getSelectedIndex();
-            if (selectedIndex != -1) {
-                Snapshot selectedSnapshot = snapshots[selectedIndex];
-                refreshComparison(selectedSnapshot);
-            }
-        });
+            String selectedValue = (String) snapshotList.getSelectedValue();
 
-        // 添加右键菜单
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem compareWithPreviousMenuItem = new JMenuItem("与上一快照比较");
-        popupMenu.add(compareWithPreviousMenuItem);
 
-        snapshotList.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int index = snapshotList.locationToIndex(e.getPoint());
-                    snapshotList.setSelectedIndex(index); // 选中当前点击的项目
-                    popupMenu.show(snapshotList, e.getX(), e.getY()); // 显示右键菜单
+            if (selectedIndex != -1 && selectedValue!=null) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                try {
+                    Date date = dateFormat.parse(selectedValue.split(", ")[0]);
+                    long timestampMillis = date.getTime();
+                    for (Snapshot snapshot : snapshots) {
+                        if (Math.abs(snapshot.getRealTimestamp() - timestampMillis) < 1000) {
+                            refreshComparison(snapshot);
+                            break; // 找到对应的 Snapshot 后停止遍历
+                        }
+                    }
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
                 }
-            }
-        });
-
-        // 与上一快照比较
-        compareWithPreviousMenuItem.addActionListener(e -> {
-            int selectedIndex = snapshotList.getSelectedIndex();
-            if (selectedIndex > 0) {
-                Snapshot previousSnapshot = snapshots[selectedIndex - 1];
-                Snapshot selectedSnapshot = snapshots[selectedIndex];
-                displayDiff(previousSnapshot, selectedSnapshot); // 显示差异
-            } else {
-                JOptionPane.showMessageDialog(frame, "没有可比较的上一 snapshot。");
             }
         });
     }
     // 初始化快照列表
-    private void initFileListView(VersionControl versionControl){
+    private void initFileListView(){
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.setPreferredSize(new Dimension(250, listPanel.getPreferredSize().height));
         snapshots = versionControl.getAllSnapshots().toArray(new Snapshot[0]);
@@ -134,6 +123,7 @@ public class SnapshotManagerUI {
                 return label;
             }
         });
+        // 初始化下拉框
         initCombo(listPanel);
         // 快照列表放在左侧，内容显示在右侧的双栏
         listPanel.add(new JScrollPane(snapshotList), BorderLayout.CENTER);
@@ -148,8 +138,9 @@ public class SnapshotManagerUI {
         fileDropdown.setPreferredSize(new Dimension(fileDropdown.getPreferredSize().width, 40));
         Set<String> uniqueFileNames = new HashSet<>();
         for (Snapshot snapshot : snapshots) {
-            // 从snapshot文件名中去掉时间戳部分
-            String fileName = snapshot.getFileNameWithoutTimestamp();
+            // 显示snapshots路径名
+            String basePath = versionControl.getProjectBasePath().replace("/snapshots","");
+            String fileName = snapshot.getFilePath().replace(basePath,".");
             uniqueFileNames.add(fileName);
         }
         // 添加所有不重复的文件名到下拉框
@@ -167,7 +158,9 @@ public class SnapshotManagerUI {
 
                 // 过滤出所有与选中文件名匹配的快照
                 for (Snapshot snapshot : snapshots) {
-                    if (snapshot.getFileNameWithoutTimestamp().equals(selectedFileName)) {
+                    String selectedFilePath = versionControl.getProjectBasePath().replace("snapshots","") + selectedFileName.replace("./","");
+                    System.out.println(selectedFilePath);
+                    if (snapshot.getFilePath().equals(selectedFilePath)) {
                         filteredSnapshots.add(snapshot);
                     }
                 }
@@ -185,13 +178,13 @@ public class SnapshotManagerUI {
     }
     // 刷新比较显示内容
     private void refreshComparison(Snapshot selectedSnapshot) {
-        String currentFileName = selectedSnapshot.getFileNameWithoutTimestamp();
+        String currentFileName = selectedSnapshot.getFilePath();
         long currentTimestamp = selectedSnapshot.getRealTimestamp();
 
         // 查找文件名相同且时间戳更小的快照作为上一版本
         Snapshot previousSnapshot = null;
         for (Snapshot snapshot : snapshots) {
-            if (snapshot.getFileNameWithoutTimestamp().equals(currentFileName)
+            if (snapshot.getFilePath().equals(currentFileName)
                     && snapshot.getRealTimestamp() < currentTimestamp) {
                 if (previousSnapshot == null || snapshot.getRealTimestamp() > previousSnapshot.getRealTimestamp()) {
                     previousSnapshot = snapshot;

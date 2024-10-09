@@ -19,7 +19,9 @@ public class VersionControlImpl implements VersionControl {
     private final String projectBasePath;
     private static final Logger logger = Logger.getLogger(VersionControlPlugin.class.getName()); // 用于记录日志信息
     private final ExecutorService executorService = Executors.newCachedThreadPool(); // 创建线程池
-
+    public String getProjectBasePath() {
+        return projectBasePath;
+    }
     //传project参数，用于初始化快照文件夹路径
     public VersionControlImpl(Project project) {
         VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
@@ -61,10 +63,7 @@ public class VersionControlImpl implements VersionControl {
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(entry.toFile()))) {
                         Snapshot snapshot = (Snapshot) ois.readObject(); // 反序列化
                         if (snapshot != null && snapshot.getFilePath().equals(path)) {
-                            //System.out.println(snapshot.getFilePath());
-                            //System.out.println("fanxuliehua win");
                             snapshots.add(snapshot); // 将反序列化的对象添加到列表中
-                            //System.out.println("add win");
                         }
                     } catch (ClassNotFoundException e) {
                         System.out.println("catch1");
@@ -87,7 +86,6 @@ public class VersionControlImpl implements VersionControl {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(projectBasePath))) {
             for (Path entry : stream) {
                 if (Files.isRegularFile(entry)) { // 检查是否为常规文件
-                    //System.out.println(entry.getFileName()); // 输出文件名
                     // 反序列化 Snapshot 对象
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(entry.toFile()))) {
                         Snapshot snapshot = (Snapshot) ois.readObject(); // 反序列化
